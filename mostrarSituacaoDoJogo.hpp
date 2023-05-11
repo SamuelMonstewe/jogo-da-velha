@@ -9,23 +9,19 @@ using std::vector;
 void mostrarSituacaoDoJogo(vector<vector<char>> &Tabuleiro)
 {
     cout << "Estado atual do jogo: " << '\n';
-    cout << '\n';
     cout << "----------------------------------" << '\n';
-
-    for (uint16_t i = 0; i < 3; i++)
+    
+    for (int i = 0; i < 3; i++)
     {
-        cout << i << "  ";
-    }
+        cout << " " << Tabuleiro[i][0] << "  |";
+        cout << " " << Tabuleiro[i][1] << "  |";
+        cout << " " << Tabuleiro[i][2] << '\n';
 
-    cout << '\n';
-
-    for (uint16_t i = 0; i < Tabuleiro.size(); i++)
-    {
-        for (uint16_t j = 0; j < Tabuleiro.size(); j++)
+        if (i != 2)
         {
-            cout << Tabuleiro[i][j] << "  ";
+            cout << "___ ___ ___\n"
+                 << '\n';
         }
-        cout << '\n';
     }
 }
 
