@@ -61,5 +61,5 @@ int verificarJogadorVencedor(vector<vector<char>> &Tabuleiro)
         return -1;
 
    
-    
+    return 0;
 }
