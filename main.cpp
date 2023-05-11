@@ -4,6 +4,12 @@
 #include <vector>
 #include "efetuarJogadas.hpp"
 #include "mostrarSituacaoDoJogo.hpp"
+#include "exibirTabuleiro.hpp"
+#include "verificarVelha.hpp"
+#include "enumeradores.hpp"
+#include "verificarEntradaIncorreta.hpp"
+#include "verificarGanhador.hpp"
+
 using std::cin;
 using std::cout;
 using std::string;
@@ -14,22 +20,28 @@ int main(int argc, char const *argv[])
     char FiguraEscolhida;
     char FiguraJogador1;
     char FiguraJogador2;
-    string SituacaoDoJogo = "jogando";
-    vector<vector<char>> JogoDaVelha(3, vector<char>(3));
+    char FiguraIncorreta = 'S';
+    SituacaoDoJogo JogadorVencedor;
+    SituacaoDoJogo SituacaoDoJogo = SituacaoDoJogo::JOGANDO;
+    vector<vector<char>> Tabuleiro(3, vector<char>(3));
     uint16_t OpcaoDaLinha;
     uint16_t OpcaoDaColuna;
     uint16_t JogadorAtual;
-    uint16_t JogadorVencedor;
-    uint16_t SomaDeFigurasX = 0;
-    uint16_t SomaDeFigurasO = 0;
 
     cout << "----------------------------------\n";
     cout << "Bem vindo ao jogo da velha!" << '\n';
     cout << "----------------------------------\n";
 
-    cout << "Escolha a sua figura <X ou O>" << '\n';
-    cin >> FiguraEscolhida;
-    FiguraEscolhida = toupper(FiguraEscolhida);
+    while (FiguraIncorreta == 'S')
+    {
+        cout << "Escolha a sua figura <X ou O>" << '\n';
+        cin >> FiguraEscolhida;
+        FiguraEscolhida = toupper(FiguraEscolhida);
+        if (verificarEntradaIncorreta(FiguraEscolhida))
+            cout << "Por favor, insira corretamente a figura que voce quer! " << '\n';
+        else
+            FiguraIncorreta = 'N';
+    }
 
     if (FiguraEscolhida == 'X')
     {
@@ -44,21 +56,10 @@ int main(int argc, char const *argv[])
         FiguraJogador2 = 'X';
     }
 
-    cout << "Aqui esta o jogo da velha: " << '\n';
+    cout << "Aqui esta o tabuleiro: " << '\n';
     cout << "---------------------------------- " << '\n';
 
-    for (uint16_t i = 0; i < JogoDaVelha.size(); i++)
-    {
-        cout.width(2);
-        cout << i << " ";
-    }
-
-    cout << '\n';
-
-    for (uint16_t i = 0; i < JogoDaVelha.size(); i++)
-    {
-        cout << i << '\n';
-    }
+    exibirTabuleiroInicioDoJogo(Tabuleiro);
 
     cout << "----------------------------------" << '\n';
     cout << "Voce deve efetuar as jogadas de acordo com os seu indices, exemplo: linha `0` depois enter; coluna `2` depos enter" << '\n';
@@ -68,13 +69,28 @@ int main(int argc, char const *argv[])
     if (JogadorAtual == 1)
     {
 
-        while (SituacaoDoJogo == "jogando")
+        while (SituacaoDoJogo == SituacaoDoJogo::JOGANDO)
         {
 
-            efetuarJogadas(JogoDaVelha, JogadorAtual, FiguraJogador1, FiguraJogador2);
-            mostrarSituacaoDoJogo(JogoDaVelha);
+            efetuarJogadas(Tabuleiro, JogadorAtual, FiguraJogador1, FiguraJogador2);
+            mostrarSituacaoDoJogo(Tabuleiro);
 
             cout << "----------------------------------" << '\n';
+
+            if (verificarJogadorVencedor(Tabuleiro) == 1)
+            {
+                JogadorVencedor = (FiguraJogador1 == 'X') ? SituacaoDoJogo::VITORIA_JOGADOR1 : SituacaoDoJogo::VITORIA_JOGADOR2;
+                SituacaoDoJogo = SituacaoDoJogo::FIM_DE_JOGO;
+            }
+            else if (verificarJogadorVencedor(Tabuleiro) == -1)
+            {
+                JogadorVencedor = (FiguraJogador1 == 'O') ? SituacaoDoJogo::VITORIA_JOGADOR1 : SituacaoDoJogo::VITORIA_JOGADOR2;
+                SituacaoDoJogo = SituacaoDoJogo::FIM_DE_JOGO;
+            }
+            else if (verificarSituacaoDeVelha(Tabuleiro))
+                SituacaoDoJogo = SituacaoDoJogo::VELHA;
+            else
+                SituacaoDoJogo = SituacaoDoJogo::JOGANDO;
 
             if (JogadorAtual == 1)
                 JogadorAtual++;
@@ -82,14 +98,29 @@ int main(int argc, char const *argv[])
                 JogadorAtual--;
         }
     }
-    else if (JogadorAtual = 2)
+    else if (JogadorAtual == 2)
     {
-        while (SituacaoDoJogo == "jogando")
+        while (SituacaoDoJogo == SituacaoDoJogo::JOGANDO)
         {
-            efetuarJogadas(JogoDaVelha, JogadorAtual, FiguraJogador1, FiguraJogador2);
-            mostrarSituacaoDoJogo(JogoDaVelha);
+            efetuarJogadas(Tabuleiro, JogadorAtual, FiguraJogador1, FiguraJogador2);
+            mostrarSituacaoDoJogo(Tabuleiro);
 
             cout << "----------------------------------" << '\n';
+
+            if (verificarJogadorVencedor(Tabuleiro) == 1)
+            {
+               JogadorVencedor = (FiguraJogador1 == 'X') ? SituacaoDoJogo::VITORIA_JOGADOR1 : SituacaoDoJogo::VITORIA_JOGADOR2;
+                SituacaoDoJogo = SituacaoDoJogo::FIM_DE_JOGO;
+            }
+            else if (verificarJogadorVencedor(Tabuleiro) == -1)
+            {
+               JogadorVencedor = (FiguraJogador1 == 'O') ? SituacaoDoJogo::VITORIA_JOGADOR1 : SituacaoDoJogo::VITORIA_JOGADOR2;
+                SituacaoDoJogo = SituacaoDoJogo::FIM_DE_JOGO;
+            }
+            else if (verificarSituacaoDeVelha(Tabuleiro))
+                SituacaoDoJogo = SituacaoDoJogo::VELHA;
+            else
+                SituacaoDoJogo = SituacaoDoJogo::JOGANDO;
 
             if (JogadorAtual == 2)
                 JogadorAtual--;
@@ -98,12 +129,17 @@ int main(int argc, char const *argv[])
         }
     }
 
-    if (SituacaoDoJogo == "velha")
-        cout << "Resuldado do jogo deu velha!" << '\n';
-    else if (SituacaoDoJogo == "Jogador1")
-        cout << "Jogador1 venceu!" << '\n';
-    else if (SituacaoDoJogo == "Jogador2")
-        cout << "Jogador2 venceu!" << '\n';
-
+    if (JogadorVencedor == SituacaoDoJogo::VITORIA_JOGADOR1)
+    {
+        cout << "JOGADOR 1 VENCEU!" << '\n';
+    }
+    else if (JogadorVencedor == SituacaoDoJogo::VITORIA_JOGADOR2)
+    {
+        cout << "JOGADOR 2 VENCEU!" << '\n';
+    }
+    else
+    {
+        cout << "O JOGO DEU VELHA!";
+    }
     return 0;
 }
