@@ -7,7 +7,7 @@ using std::vector;
 int verificarJogadorVencedor(vector<vector<char>> &Tabuleiro)
 {
     vector<vector<int>> TabuleiroComNumeros(3, vector<int>(3));
-    int Soma;
+    int16_t Soma;
 
     for (uint16_t i = 0; i < 3; i++)
     {
